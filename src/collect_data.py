@@ -4,9 +4,13 @@ import os
 import csv
 import requests
 import email
-from phishtank import PhishTankClient
 
-from config import PHISHTANK_KEY, PHISHTANK_URL, ENRON_PATH
+try:
+    # when imported as a package (e.g., `import src.collect_data`)
+    from .config import PHISHTANK_KEY, PHISHTANK_URL, ENRON_PATH
+except Exception:
+    # when run as a script (e.g., `python src/collect_data.py`)
+    from config import PHISHTANK_KEY, PHISHTANK_URL, ENRON_PATH
 
 
 def download_phishtank(output_path: str):

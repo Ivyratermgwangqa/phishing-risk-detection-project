@@ -1,0 +1,22 @@
+# requirements.txt for phishing-risk-detection-project
+
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+requests
+beautifulsoup4
+tqdm
+joblibpandas>=1.5
+numpy>=1.24
+scikit-learn>=1.2
+tldextract>=3.4
+python-whois>=0.9
+python-dotenv>=1.0
+requests>=2.28
+matplotlib>=3.7
+joblib>=1.2
+shap>=0.41
+networkx>=3.1
+virustotal-python>=1.0   # provides `import vt` for VirusTotal enrichment (optional)
