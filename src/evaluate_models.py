@@ -29,10 +29,31 @@ import tldextract
 def extract_urls(text: str) -> list:
     """Extract all URLs from a text string"""
     regex = r'https?://[^\s]+'  # simple pattern
-    return re.findall(regex, text)
+    raw = re.findall(regex, text)
+    # normalize URLs and remove fragments
+    return [normalize_url(u) for u in raw]
 
 
 def parse_domain_age(domain: str) -> int:
     """Stub for domain age calculation"""
-    # Implement as needed
-    return 0
+    # Basic domain parsing using tldextract to extract domain parts
+    parts = tldextract.extract(domain)
+    if not parts.domain:
+        return 0
+    # placeholder: use length of domain name as a deterministic proxy
+    return len(parts.domain)
+
+
+def normalize_url(url: str) -> str:
+    """Normalize a URL: remove fragments, lowercase scheme+host, strip default ports."""
+    try:
+        p = urllib.parse.urlparse(url)
+        scheme = p.scheme.lower()
+        netloc = p.hostname.lower() if p.hostname else ''
+        if p.port and p.port not in (80, 443):
+            netloc = f"{netloc}:{p.port}"
+        path = urllib.parse.quote(urllib.parse.unquote(p.path))
+        query = ''  # strip query for normalization
+        return urllib.parse.urlunparse((scheme, netloc, path, '', query, ''))
+    except Exception:
+        return url
