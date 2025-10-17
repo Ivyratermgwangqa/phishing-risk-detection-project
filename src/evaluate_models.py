@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 def evaluate_phishing(model_path: str, feature_csv: str):
     clf = joblib.load(model_path)
     df = pd.read_csv(feature_csv)
-    X = df.drop(columns=['label'])
+    # Drop non-numeric/non-feature columns as in training
+    X = df.drop(columns=['label', 'url', 'sender_domain', 'domain'], errors='ignore')
     y = df['label']
     prob = clf.predict_proba(X)[:,1]
     fpr, tpr, _ = roc_curve(y, prob)
@@ -17,7 +18,14 @@ def evaluate_phishing(model_path: str, feature_csv: str):
     plt.figure()
     plt.plot(fpr, tpr)
     plt.title(f"Phishing ROC AUC = {roc_auc:.2f}")
-    plt.show()
+    plt.savefig("phishing_roc_curve.png", bbox_inches='tight')
+    print("ROC curve saved to phishing_roc_curve.png")
+
+if __name__ == "__main__":
+    # Update these paths as needed for your project structure
+    model_path = "../models/phishing_rf_model.pkl"
+    feature_csv = "../data/processed/phishing_graph_features.csv"
+    evaluate_phishing(model_path, feature_csv)
 
 # utils.py
 # Shared helper functions

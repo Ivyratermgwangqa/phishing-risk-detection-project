@@ -56,8 +56,12 @@ class PhishingDetectionFramework:
         if self.auth_model is None or self.auth_logs is None:
             print("Auth model or logs not loaded.")
             return None, None
+        # Only use the features the model was trained on
+        features = ['distance_km', 'login_hour', 'new_device']
         if X is None:
-            X = self.auth_logs.drop(columns=['label'], errors='ignore')
+            X = self.auth_logs[features]
+        else:
+            X = X[features]
         preds = self.auth_model.predict(X)
         probs = self.auth_model.predict_proba(X)[:, 1] if hasattr(self.auth_model, 'predict_proba') else preds
         return preds, probs
@@ -82,8 +86,11 @@ class PhishingDetectionFramework:
         if self.auth_model is None or self.auth_logs is None:
             print("Auth model or logs not loaded.")
             return
+        features = ['distance_km', 'login_hour', 'new_device']
         if X is None:
-            X = self.auth_logs.drop(columns=['label'], errors='ignore')
+            X = self.auth_logs[features]
+        else:
+            X = X[features]
         explainer = shap.TreeExplainer(self.auth_model)
         shap_values = explainer.shap_values(X)
         sv = shap_values[1] if isinstance(shap_values, list) and len(shap_values) > 1 else shap_values[0]
