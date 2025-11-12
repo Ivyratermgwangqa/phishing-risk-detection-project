@@ -20,8 +20,10 @@ plt.style.use('default')
 sns.set_palette("husl")
 
 # === Paths to models and data from your notebooks ===
-DATA_DIR = os.path.join('..', 'data', 'processed')
-MODEL_DIR = os.path.join('..', 'models')
+# Support both running from root and from src directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, 'data', 'processed')
+MODEL_DIR = os.path.join(BASE_DIR, 'models')
 
 PHISH_FEATURES_CSV = os.path.join(DATA_DIR, 'phishing_graph_features.csv')
 AUTH_LOGS_CSV = os.path.join(DATA_DIR, 'auth_logs.csv')
