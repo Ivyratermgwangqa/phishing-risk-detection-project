@@ -1,10 +1,14 @@
 import os
+import sys
 import joblib
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
+import json
+from urllib.parse import urlparse
+import tldextract
 
 from sklearn.ensemble import RandomForestClassifier, IsolationForest
 from sklearn.model_selection import train_test_split
@@ -99,30 +103,217 @@ class PhishingDetectionFramework:
                         sv[idx], X.iloc[idx], matplotlib=True)
         plt.show()
 
+    def extract_url_features(self, url):
+        """Extract basic features from a URL for prediction."""
+        parsed = urlparse(url)
+        ext = tldextract.extract(url)
+        
+        features = {
+            'url_length': len(url),
+            'domain_length': len(parsed.netloc),
+            'path_length': len(parsed.path),
+            'has_ip': 1 if parsed.netloc.replace('.', '').replace(':', '').isdigit() else 0,
+            'has_at': 1 if '@' in url else 0,
+            'num_dots': url.count('.'),
+            'num_hyphens': url.count('-'),
+            'num_underscores': url.count('_'),
+            'num_slashes': url.count('/'),
+            'num_questionmarks': url.count('?'),
+            'num_equals': url.count('='),
+            'num_ampersands': url.count('&'),
+            'is_https': 1 if parsed.scheme == 'https' else 0,
+            'tld': ext.suffix,
+            'subdomain_count': len(ext.subdomain.split('.')) if ext.subdomain else 0,
+        }
+        return features
+
+    def get_threat_intel(self, url, sender_email=None):
+        """
+        Get threat intelligence for a URL and sender.
+        Returns a dictionary with threat intelligence details.
+        
+        Note: This is a simplified implementation. For production use,
+        integrate with actual threat intelligence APIs like VirusTotal.
+        """
+        threat_intel = {
+            'url': url,
+            'sender': sender_email,
+            'malicious': False,
+            'suspicious': False,
+            'detection_engines': 0,
+            'source': 'local_analysis'
+        }
+        
+        # Simple heuristics for demonstration
+        parsed = urlparse(url)
+        suspicious_tlds = ['.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top']
+        suspicious_keywords = ['login', 'secure', 'account', 'verify', 'update', 'confirm']
+        
+        # Check for suspicious TLD
+        for tld in suspicious_tlds:
+            if url.lower().endswith(tld):
+                threat_intel['suspicious'] = True
+                threat_intel['detection_engines'] += 1
+                break
+        
+        # Check for suspicious keywords
+        url_lower = url.lower()
+        for keyword in suspicious_keywords:
+            if keyword in url_lower:
+                threat_intel['suspicious'] = True
+                threat_intel['detection_engines'] += 1
+                break
+        
+        # Check sender domain reputation (simplified)
+        if sender_email and sender_email.count('@') == 1:
+            sender_domain = sender_email.split('@')[1]
+            # In production, check against known malicious domains
+            if sender_domain != parsed.netloc:
+                threat_intel['suspicious'] = True
+                threat_intel['detection_engines'] += 1
+        
+        return threat_intel
+
+    def predict_single(self, input_data, return_shap=False):
+        """
+        Predict phishing risk for a single URL with threat intelligence.
+        
+        Args:
+            input_data: dict with 'url' and optionally 'sender' keys
+            return_shap: bool, whether to return SHAP values
+            
+        Returns:
+            dict with prediction, probability, threat intelligence, and optionally SHAP values
+        """
+        url = input_data.get('url', '')
+        sender = input_data.get('sender', '')
+        
+        # Extract features
+        url_features = self.extract_url_features(url)
+        
+        # Get threat intelligence
+        threat_intel = self.get_threat_intel(url, sender)
+        
+        # Get reference features from training data
+        feature_cols = [col for col in self.phish_features.columns 
+                       if col not in ['label', 'url', 'sender_domain', 'domain']]
+        
+        # Create feature vector with defaults
+        X_dict = {col: 0 for col in feature_cols}
+        
+        # Update with extracted features where names match
+        for key, value in url_features.items():
+            if key in X_dict:
+                X_dict[key] = value
+        
+        # Convert to DataFrame
+        X = pd.DataFrame([X_dict])
+        
+        # Make prediction
+        pred = self.phish_model.predict(X)[0]
+        prob = self.phish_model.predict_proba(X)[0, 1] if hasattr(self.phish_model, 'predict_proba') else pred
+        
+        result = {
+            'url': url,
+            'sender': sender,
+            'prediction': int(pred),
+            'probability': float(prob),
+            'threat_intelligence': threat_intel
+        }
+        
+        # Add SHAP values if requested
+        if return_shap:
+            import shap
+            explainer = shap.TreeExplainer(self.phish_model)
+            shap_values = explainer.shap_values(X)
+            sv = shap_values[1] if isinstance(shap_values, list) and len(shap_values) > 1 else shap_values[0]
+            
+            # Get top contributing features
+            feature_importance = list(zip(feature_cols, sv[0]))
+            feature_importance.sort(key=lambda x: abs(x[1]), reverse=True)
+            
+            result['shap_values'] = {
+                'top_contributors': [
+                    {'feature': feat, 'value': float(val)} 
+                    for feat, val in feature_importance[:10]
+                ]
+            }
+        
+        return result
+
 # === Example usage ===
 
 if __name__ == "__main__":
     print("=== Explainable Phishing Detection Framework ===")
-    print("Initializing framework...")
+    
+    # Check if SINGLE_PREDICT mode is enabled
+    single_predict_mode = os.environ.get('SINGLE_PREDICT', '0') == '1'
+    
+    if single_predict_mode:
+        print("Running in SINGLE_PREDICT mode...")
+        print("Initializing framework...")
+        framework = PhishingDetectionFramework()
+        
+        print("\n" + "="*60)
+        print("Single URL Prediction with Threat Intelligence")
+        print("="*60)
+        
+        # Get user input
+        url = input("\nEnter URL to analyze: ").strip()
+        sender = input("Enter sender email (optional): ").strip()
+        
+        # Perform prediction
+        print("\nAnalyzing...")
+        input_data = {'url': url, 'sender': sender if sender else None}
+        result = framework.predict_single(input_data, return_shap=True)
+        
+        # Display results
+        print("\n" + "="*60)
+        print("PREDICTION RESULTS")
+        print("="*60)
+        print(f"URL: {result['url']}")
+        if result['sender']:
+            print(f"Sender: {result['sender']}")
+        print(f"\nPredicted Label: {result['prediction']} {'(Phishing)' if result['prediction'] == 1 else '(Legitimate)'}")
+        print(f"Probability: {result['probability']:.4f}")
+        
+        print("\n" + "-"*60)
+        print("THREAT INTELLIGENCE")
+        print("-"*60)
+        ti = result['threat_intelligence']
+        print(f"Malicious: {ti['malicious']}")
+        print(f"Suspicious: {ti['suspicious']}")
+        print(f"Detection Engines: {ti['detection_engines']}")
+        print(f"Source: {ti['source']}")
+        
+        if 'shap_values' in result:
+            print("\n" + "-"*60)
+            print("TOP CONTRIBUTING FEATURES (SHAP)")
+            print("-"*60)
+            for contrib in result['shap_values']['top_contributors'][:5]:
+                print(f"  {contrib['feature']}: {contrib['value']:.4f}")
+        
+        print("\n" + "="*60)
+    else:
+        print("Initializing framework...")
+        framework = PhishingDetectionFramework()
 
-    framework = PhishingDetectionFramework()
+        print("\nPhishing model predictions on loaded features:")
+        preds, probs = framework.predict_phishing()
+        print(pd.Series(preds).value_counts())
+        print("Sample predicted probabilities:", probs[:5])
 
-    print("\nPhishing model predictions on loaded features:")
-    preds, probs = framework.predict_phishing()
-    print(pd.Series(preds).value_counts())
-    print("Sample predicted probabilities:", probs[:5])
+        if framework.auth_model is not None:
+            print("\nAuth risk model predictions on loaded logs:")
+            apreds, aprobs = framework.predict_auth_risk()
+            print(pd.Series(apreds).value_counts())
+            print("Sample auth risk probabilities:", aprobs[:5])
 
-    if framework.auth_model is not None:
-        print("\nAuth risk model predictions on loaded logs:")
-        apreds, aprobs = framework.predict_auth_risk()
-        print(pd.Series(apreds).value_counts())
-        print("Sample auth risk probabilities:", aprobs[:5])
+        # Show SHAP explanations for the first phishing sample
+        print("\nGenerating SHAP explanation for phishing model (first sample)...")
+        framework.explain_phishing(idx=0)
 
-    # Show SHAP explanations for the first phishing sample
-    print("\nGenerating SHAP explanation for phishing model (first sample)...")
-    framework.explain_phishing(idx=0)
-
-    # Show SHAP explanations for the first auth sample (if available)
-    if framework.auth_model is not None:
-        print("\nGenerating SHAP explanation for auth risk model (first sample)...")
-        framework.explain_auth(idx=0)
+        # Show SHAP explanations for the first auth sample (if available)
+        if framework.auth_model is not None:
+            print("\nGenerating SHAP explanation for auth risk model (first sample)...")
+            framework.explain_auth(idx=0)
