@@ -1,2 +1,16 @@
 data/raw/enron_emails/emails.csv
 .env
+
+# Large CSV annotation files that fail to upload
+models/phishing_shap_sample_*_annot.csv
+
+# Large processed data files
+data/processed/phishing_graph_features_vt.csv
+data/processed/url_features_vt.csv
+
+# Cache files
+data/processed/vt_cache.json
+data/processed/vt_audit.jsonl
+
+# Python cache
+src/__pycache__/
