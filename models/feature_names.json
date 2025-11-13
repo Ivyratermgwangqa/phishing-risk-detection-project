@@ -1,0 +1,1 @@
+["has_at", "has_ip", "num_dots", "num_hyphens", "num_qm", "num_underscores", "path_length", "sender_domain_mismatch", "subdomain_count", "domain_degree_agg", "sender_degree_agg", "domain_degree_weighted", "domain_clustering_agg", "domain_betweenness_approx", "sender_betweenness_approx", "url_degree_simple"]
