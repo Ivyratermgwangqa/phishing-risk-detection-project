@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GroupShuffleSplit
-from sklearn.metrics import roc_auc_score, precision_recall_fscore_support
+from sklearn.metrics import roc_auc_score, precision_recall_fscore_support, roc_curve
 from sklearn.impute import SimpleImputer
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -116,6 +116,23 @@ y_train, y_test = y.iloc[train_idx], y.iloc[test_idx]
 print('Train shape:', X_train.shape, 'Test shape:', X_test.shape)
 print('Train label dist:', y_train.value_counts().to_dict(), 'Test label dist:', y_test.value_counts().to_dict())
 
+# Persist train/test split and test labels for downstream plotting and evaluation
+metrics_path = os.path.join(MODELDIR, 'training_metrics.json')
+metrics = {
+    'train_idx': train_idx.tolist() if hasattr(train_idx, 'tolist') else list(train_idx),
+    'test_idx': test_idx.tolist() if hasattr(test_idx, 'tolist') else list(test_idx),
+    'feature_names': numeric,
+    'y_test': y_test.tolist()
+}
+with open(metrics_path, 'w') as mf:
+    json.dump(metrics, mf)
+
+# Save test arrays for convenience (fast load by plotting helpers)
+np.save(os.path.join(MODELDIR, 'X_test.npy'), X_test.values)
+np.save(os.path.join(MODELDIR, 'y_test.npy'), y_test.values)
+
+print("Saved test split info and arrays to:", MODELDIR)
+
 # Train
 clf = RandomForestClassifier(n_estimators=200, random_state=42, class_weight='balanced', n_jobs=-1)
 clf.fit(X_train, y_train)
@@ -130,5 +147,47 @@ proba = clf.predict_proba(X_test)[:, 1]
 auc = roc_auc_score(y_test, proba)
 prec, recall, f1, _ = precision_recall_fscore_support(y_test, clf.predict(X_test), average='binary', zero_division=0)
 
+# Calculate ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, proba)
+
 print(f"Model saved to: {MODEL_PATH}")
 print(f"AUC: {auc:.4f}  Precision: {prec:.4f}  Recall: {recall:.4f}  F1: {f1:.4f}")
+
+# Save training metrics for dashboard visualization
+metrics_data = {
+    'data_stats': {
+        'initial_shape': list(df.shape) if 'df' in locals() else [0, 0],
+        'final_shape': [len(X_imputed), len(X_imputed.columns)],
+        'duplicate_rows': int(df.duplicated().sum()) if 'df' in locals() else 0,
+        'unique_urls': int(df['url'].nunique()) if 'url' in df.columns else 0,
+        'total_rows': len(df) if 'df' in locals() else 0,
+        'label_counts': df['label'].value_counts().to_dict() if 'df' in locals() else {},
+        'dropped_leakage_cols': leak_candidates if 'leak_candidates' in locals() else []
+    },
+    'train_test_split': {
+        'train_shape': list(X_train.shape),
+        'test_shape': list(X_test.shape),
+        'train_label_dist': y_train.value_counts().to_dict(),
+        'test_label_dist': y_test.value_counts().to_dict()
+    },
+    'model_performance': {
+        'auc': float(auc),
+        'precision': float(prec),
+        'recall': float(recall),
+        'f1': float(f1)
+    },
+    'roc_curve': {
+        'fpr': fpr.tolist(),
+        'tpr': tpr.tolist(),
+        'thresholds': thresholds.tolist()
+    },
+    'features': {
+        'numeric_features_count': len(numeric),
+        'feature_names': list(X_imputed.columns)
+    }
+}
+
+METRICS_PATH = os.path.join(MODELDIR, 'training_metrics.json')
+with open(METRICS_PATH, 'w') as f:
+    json.dump(metrics_data, f, indent=2)
+print(f"Training metrics saved to: {METRICS_PATH}")

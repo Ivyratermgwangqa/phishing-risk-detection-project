@@ -1,0 +1,456 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║               CHAPTER 4 & 5: FIGURE & TABLE DATA SOURCE MAPPING               ║
+║                    Phishing Risk Detection Project                             ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+                          📊 FIGURES MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+CHAPTER 4: IMPLEMENTATION
+─────────────────────────────────────────────────────────────────────────────
+
+  Figure 4.1: Training and Validation Workflow
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "train_test_split"      │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/figures/fig4_1_train_test_split.png  │
+  │                                                                   │
+  │ DATA SHOWS:                                                       │
+  │   • Train set: 111,722 samples (70%)                             │
+  │   • Test set: 47,881 samples (30%)                               │
+  │   • Label distribution in each split                              │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 4.2: Data Preprocessing Pipeline
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "data_stats"            │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/figures/fig4_2_preprocessing_stats.png│
+  │                                                                   │
+  │ PIPELINE STAGES:                                                  │
+  │   1. Initial: 381,450 rows, 27 features                          │
+  │   2. Deduplicated: 159,603 rows, 26 features                     │
+  │   3. Leakage removed: 159,603 rows, 19 features                  │
+  │   4. Final: 159,603 rows, 19 features                            │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 4.3: SHAP Value Calculation Process
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/shap_values.npz                                 │
+  │ 📖 CODE: src/compute_shap.py                                      │
+  │ 📓 NOTEBOOK: notebooks/04-model-training.ipynb                    │
+  │                                                                   │
+  │ LOAD WITH:                                                        │
+  │   import numpy as np                                              │
+  │   shap_data = np.load('models/shap_values.npz')                  │
+  │   shap_values = shap_data['shap_values']                         │
+  │   expected_value = shap_data['expected_value']                   │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 4.4: Feature Attribution Methodology
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/phishing_shap_sample_*_annot.csv                │
+  │ ✅ READY: models/phishing_shap_bar_sample_*.png                   │
+  │                                                                   │
+  │ ANNOTATION FILES (5 samples):                                     │
+  │   • phishing_shap_sample_0_idx_2_annot.csv                       │
+  │   • phishing_shap_sample_3_idx_18_annot.csv                      │
+  │   • phishing_shap_sample_4_idx_45461_annot.csv                   │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+CHAPTER 5: RESULTS AND ANALYSIS
+─────────────────────────────────────────────────────────────────────────────
+
+Section 5.1: Model Performance
+───────────────────────────────
+
+  Figure 5.1: ROC Curve for Phishing Classifier (AUC = 0.9888)
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "roc_curve"             │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/figures/fig5_1_roc_curve.png          │
+  │                                                                   │
+  │ CONTAINS:                                                         │
+  │   • FPR values (array of ~400 points)                            │
+  │   • TPR values (array of ~400 points)                            │
+  │   • AUC: 0.9888                                                   │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.2: Authentication Risk Model ROC Curve (Holdout Set)
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ ✅ READY: models/auth_risk_holdout_roc.png                        │
+  │ 📓 NOTEBOOK: notebooks/05-auth-risk-model.ipynb                   │
+  │                                                                   │
+  │ STATUS: Already generated - just copy and use!                    │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.3: Confusion Matrix for Test Set
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Need to generate from test predictions                │
+  │ 📖 CODE: Load model + test data, predict, create matrix          │
+  │ 📓 NOTEBOOK: notebooks/04-model-training.ipynb (re-run)          │
+  │                                                                   │
+  │ METHOD:                                                           │
+  │   from sklearn.metrics import confusion_matrix                    │
+  │   cm = confusion_matrix(y_test, y_pred)                          │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.4: Precision-Recall Curve
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Generate from model + test data                        │
+  │ 📖 CODE: Use precision_recall_curve from sklearn                  │
+  │ 📓 NOTEBOOK: notebooks/04-model-training.ipynb                    │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+Section 5.2: SHAP Explanations
+───────────────────────────────
+
+  Figure 5.5: SHAP Summary Plot for Top Contributing Features
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ ✅ READY: models/phishing_shap_summary.png                        │
+  │                                                                   │
+  │ STATUS: Already generated - just copy and use!                    │
+  │ SHOWS: Global feature importance across all predictions           │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.6: SHAP Bar Plot - Phishing URL Sample (High Risk)
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ ✅ READY: models/phishing_shap_bar_sample_0_idx_2.png             │
+  │           models/phishing_shap_bar_sample_3_idx_45463.png         │
+  │                                                                   │
+  │ CHOOSE FROM 5 AVAILABLE SAMPLES:                                  │
+  │   • sample_0_idx_2.png                                            │
+  │   • sample_1_idx_27.png                                           │
+  │   • sample_2_idx_27629.png                                        │
+  │   • sample_3_idx_45463.png                                        │
+  │   • sample_4_idx_18.png                                           │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.7: SHAP Bar Plot - Benign URL Sample (Low Risk)
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Need to generate from benign predictions               │
+  │ 📖 OR: Use existing high-confidence benign from test set          │
+  │ 📓 NOTEBOOK: notebooks/04-model-training.ipynb                    │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.8: SHAP Force Plot - Individual Prediction Explanation
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ ✅ READY: models/phishing_shap_force_sample_0_idx_2.html          │
+  │           (Interactive HTML - open in browser & screenshot)       │
+  │                                                                   │
+  │ AVAILABLE SAMPLES:                                                 │
+  │   • phishing_shap_force_sample_0_idx_2.html                       │
+  │   • phishing_shap_force_sample_1_idx_27.html                      │
+  │   • phishing_shap_force_sample_2_idx_27629.html                   │
+  │   • phishing_shap_force_sample_3_idx_45463.html                   │
+  │   • phishing_shap_force_sample_4_idx_18.html                      │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.9: SHAP Waterfall Plot - Feature Contribution Breakdown
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Generate from shap_values.npz                          │
+  │ 📖 CODE: shap.plots.waterfall(shap_values[index])                │
+  │ 📓 NOTEBOOK: notebooks/04-model-training.ipynb                    │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.10: SHAP Bar Plot - Authentication Risk Sample
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ ✅ READY: models/auth_shap_bar_sample_*.png                       │
+  │                                                                   │
+  │ AVAILABLE SAMPLES (5):                                             │
+  │   • auth_shap_bar_sample_0_idx_120.png                            │
+  │   • auth_shap_bar_sample_1_idx_121.png                            │
+  │   • auth_shap_bar_sample_2_idx_119.png                            │
+  │   • auth_shap_bar_sample_3_idx_9.png                              │
+  │   • auth_shap_bar_sample_4_idx_112.png                            │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+Section 5.3: Feature Importance Analysis
+────────────────────────────────────────
+
+  Figure 5.11: Global Feature Importance Rankings
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/phishing_rf_model.pkl                           │
+  │ 📖 CODE: Extract feature_importances_ from Random Forest          │
+  │                                                                   │
+  │ METHOD:                                                           │
+  │   with open('models/phishing_rf_model.pkl', 'rb') as f:          │
+  │       pipeline = pickle.load(f)                                   │
+  │   rf = pipeline.named_steps['classifier']                         │
+  │   importances = rf.feature_importances_                          │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.12: VirusTotal Score Impact on Predictions
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: data/processed/url_features_vt.csv                     │
+  │ 📖 ANALYSIS: Group by vt_threat_score, analyze predictions        │
+  │                                                                   │
+  │ VT FEATURES:                                                       │
+  │   • vt_malicious_votes                                            │
+  │   • vt_suspicious_votes                                           │
+  │   • vt_threat_score                                               │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.13: Graph Features Contribution to Classification
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/shap_values.npz + feature_names.json           │
+  │ 📖 ANALYSIS: Extract SHAP for 6 graph features                    │
+  │                                                                   │
+  │ GRAPH FEATURES (6):                                                │
+  │   • domain_degree_agg                                             │
+  │   • sender_degree_agg                                             │
+  │   • domain_degree_weighted                                        │
+  │   • domain_clustering_agg                                         │
+  │   • domain_betweenness_approx                                     │
+  │   • sender_betweenness_approx                                     │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.14: URL Structure Features Analysis
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/shap_values.npz + feature_names.json           │
+  │ 📖 ANALYSIS: Extract SHAP for 7 URL features                      │
+  │                                                                   │
+  │ URL FEATURES (7):                                                  │
+  │   • has_at, has_ip, num_dots, num_hyphens                        │
+  │   • num_qm, num_underscores, path_length                         │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+Section 5.4: Comparative Analysis
+─────────────────────────────────
+
+  Figure 5.15: Model Performance Comparison Across Metrics
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "model_performance"     │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/figures/fig5_15_performance.png       │
+  │                                                                   │
+  │ METRICS:                                                          │
+  │   • AUC-ROC: 0.9888                                               │
+  │   • Precision: 0.9236                                             │
+  │   • Recall: 0.9632                                                │
+  │   • F1 Score: 0.9430                                              │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.16: Cross-Validation Scores Distribution
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: reports/cv_scores.json                                 │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/figures/fig5_16_cv_scores.png         │
+  │                                                                   │
+  │ DATA:                                                             │
+  │   Fold 1: 0.9890                                                  │
+  │   Fold 2: 0.9885                                                  │
+  │   Fold 3: 0.9891                                                  │
+  │   Fold 4: 0.9896                                                  │
+  │   Fold 5: 0.9890                                                  │
+  │   Mean: 0.9891 ± 0.0003                                           │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Figure 5.17: Training Time vs. Model Complexity
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Need to benchmark different configurations             │
+  │ 📖 METHOD: Train models with varying parameters, time them        │
+  │ 📓 NOTEBOOK: Create custom analysis                               │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          📋 TABLES MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+  Table 1: Model Performance Metrics
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "model_performance"     │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/tables/table1_performance_metrics.csv │
+  │                                                                   │
+  │ METRICS:                                                          │
+  │   AUC-ROC   : 0.9888 | Excellent discrimination capability       │
+  │   Precision : 0.9236 | 92% accuracy when flagging phishing       │
+  │   Recall    : 0.9632 | Catches 96% of phishing attempts          │
+  │   F1 Score  : 0.9430 | Balanced precision and recall             │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 2: Cross-Validation Performance
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: reports/cv_scores.json                                 │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/tables/table2_cv_scores.csv           │
+  │                                                                   │
+  │ 5-FOLD GROUPKFOLD RESULTS:                                         │
+  │   {"scores": [0.9890, 0.9885, 0.9891, 0.9896, 0.9890],          │
+  │    "mean": 0.9891, "std": 0.0003}                                │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 3: VirusTotal Feature Columns
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Documentation + data/processed/url_features_vt.csv     │
+  │ 📝 READY: Already documented in docs/list_of_tables.md           │
+  │                                                                   │
+  │ VT FEATURES (3):                                                   │
+  │   • vt_malicious_votes (int): # of engines flagging malicious    │
+  │   • vt_suspicious_votes (int): # of engines flagging suspicious  │
+  │   • vt_threat_score (int): 0=Benign, 1=Suspicious, 2=Malicious  │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 4: Dataset Statistics
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/training_metrics.json → "data_stats"            │
+  │ 📊 GENERATE: python generate_chapter4_viz.py                      │
+  │ 📂 OUTPUT: reports/chapter4/tables/table4_dataset_stats.csv       │
+  │                                                                   │
+  │ STATISTICS:                                                        │
+  │   Total records (raw)         : 381,450                           │
+  │   Duplicate URLs detected     : 221,847                           │
+  │   Final records (deduplicated): 159,603                           │
+  │   Final features              : 19                                │
+  │   Benign samples (label=0)    : 105,962                           │
+  │   Phishing samples (label=1)  : 53,641                            │
+  │   Class ratio (phishing %)    : 33.6%                             │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 5: VirusTotal Threat Distribution
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: data/processed/url_features_vt.csv                     │
+  │ 📖 ANALYZE:                                                        │
+  │   df = pd.read_csv('data/processed/url_features_vt.csv')         │
+  │   df['vt_threat_score'].value_counts()                           │
+  │                                                                   │
+  │ EXPECTED DISTRIBUTION (from 381,450 records):                     │
+  │   Benign (0)       : 380,963 (99.87%)                            │
+  │   Suspicious (1)   : 252 (0.07%)                                 │
+  │   Malicious (2)    : 232 (0.06%)                                 │
+  │   Total flagged    : 484 (0.13%)                                 │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 6: Feature Categories
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: models/feature_names.json + manual categorization      │
+  │ 📝 READY: Already documented in docs/list_of_tables.md           │
+  │                                                                   │
+  │ 19 FEATURES IN 5 CATEGORIES:                                       │
+  │   URL Structure (7)    : has_at, has_ip, num_dots, ...           │
+  │   Domain Analysis (2)  : sender_domain_mismatch, subdomain_count │
+  │   Graph Features (6)   : domain_degree_agg, sender_degree_agg... │
+  │   Network Features (1) : url_degree_simple                       │
+  │   Threat Intel (3)     : vt_malicious_votes, vt_suspicious...    │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 7: VT Feature Correlation with Phishing Labels
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: data/processed/url_features_vt.csv                     │
+  │ 📖 CALCULATE:                                                      │
+  │   df = pd.read_csv('data/processed/url_features_vt.csv')         │
+  │   corr = df[['vt_threat_score', 'vt_malicious_votes',           │
+  │              'vt_suspicious_votes', 'label']].corr()['label']   │
+  │                                                                   │
+  │ EXPECTED CORRELATIONS:                                             │
+  │   vt_threat_score     : 0.0835 (Moderate positive)               │
+  │   vt_malicious_votes  : 0.0631 (Weak positive)                   │
+  │   vt_suspicious_votes : 0.0396 (Weak positive)                   │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 8: Data Quality Issues and Resolutions
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: Documentation from development process                 │
+  │ 📝 READY: Already documented in docs/list_of_tables.md           │
+  │                                                                   │
+  │ KEY ISSUES RESOLVED:                                               │
+  │   • Duplicate URLs: 221,847 → Deduplication + GroupKFold         │
+  │   • Data leakage: url_length → Dropped                           │
+  │   • All-NA column: domain_age_days → Dropped                     │
+  │   • Feature mismatch → Aligned with feature_names.json           │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 9: Model Artifacts Generated
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: List files in models/ and reports/ directories         │
+  │ 📝 READY: Already documented in docs/list_of_tables.md           │
+  │                                                                   │
+  │ KEY ARTIFACTS:                                                     │
+  │   • phishing_rf_model.pkl (Trained model)                         │
+  │   • feature_names.json (19 feature names)                         │
+  │   • training_metrics.json (All metrics)                           │
+  │   • shap_values.npz (SHAP explanations)                          │
+  │   • phishing_shap_summary.png (Global importance)                 │
+  └───────────────────────────────────────────────────────────────────┘
+
+  Table 10: Top High-Risk Domains by VirusTotal
+  ┌───────────────────────────────────────────────────────────────────┐
+  │ 📍 SOURCE: data/processed/url_features_vt.csv                     │
+  │ 📖 QUERY:                                                          │
+  │   df = pd.read_csv('data/processed/url_features_vt.csv')         │
+  │   top = df.nlargest(10, 'vt_malicious_votes')                    │
+  │                                                                   │
+  │ TOP 3 DOMAINS (example):                                           │
+  │   llius.cn                      : 17 malicious votes             │
+  │   ovqjk.cn                      : 16 malicious votes             │
+  │   pl-kategorie781247621782.icu  : 16 malicious votes             │
+  └───────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          🚀 QUICK START COMMANDS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Check what's already available:
+   $ ls -lh models/*.png
+   $ ls -lh models/*.json
+
+2. Generate missing visualizations:
+   $ python generate_chapter4_viz.py
+
+3. View generated outputs:
+   $ ls -lh reports/chapter4/figures/
+   $ ls -lh reports/chapter4/tables/
+
+4. For custom analysis:
+   $ jupyter notebook
+   → Open: notebooks/04-model-training.ipynb
+
+5. View dashboard:
+   $ streamlit run dashboard.py
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                          ✅ STATUS SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+ALREADY GENERATED (Ready to use):
+  ✓ models/phishing_shap_summary.png
+  ✓ models/phishing_shap_bar_sample_*.png (5 samples)
+  ✓ models/phishing_shap_force_sample_*.html (5 samples)
+  ✓ models/auth_risk_holdout_roc.png
+  ✓ models/auth_shap_bar_sample_*.png (5 samples)
+  ✓ models/training_metrics.json (all metrics)
+  ✓ reports/cv_scores.json (CV results)
+
+AUTO-GENERATED BY SCRIPT:
+  → reports/chapter4/figures/fig5_1_roc_curve.png
+  → reports/chapter4/figures/fig5_15_performance_comparison.png
+  → reports/chapter4/figures/fig5_16_cv_scores.png
+  → reports/chapter4/figures/fig4_1_train_test_split.png
+  → reports/chapter4/figures/fig4_2_preprocessing_stats.png
+  → reports/chapter4/tables/*.csv (3 tables)
+
+NEED TO GENERATE MANUALLY:
+  ⚠ Figure 5.3: Confusion Matrix (from test predictions)
+  ⚠ Figure 5.4: Precision-Recall Curve
+  ⚠ Figure 5.7: Benign SHAP example
+  ⚠ Figure 5.9: SHAP Waterfall Plot
+  ⚠ Figure 5.11: Feature Importance (from model)
+  ⚠ Table 5: VT Distribution (calculate from CSV)
+  ⚠ Table 7: VT Correlations (calculate from CSV)
+  ⚠ Table 10: Top VT Domains (query from CSV)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+For detailed instructions, see:
+  • docs/CHAPTER4_DATA_SOURCE_GUIDE.md (comprehensive guide)
+  • CHAPTER4_QUICK_REFERENCE.md (quick reference)
+═══════════════════════════════════════════════════════════════════════════════

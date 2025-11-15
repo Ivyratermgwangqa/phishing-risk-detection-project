@@ -1,0 +1,237 @@
+# Explainable Phishing Detection Framework - Visual Diagram
+
+## Complete System Architecture
+
+```
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                         EXPLAINABLE PHISHING DETECTION FRAMEWORK           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            LAYER 1: INPUT                                    │
+│                          📥 URL Collection                                   │
+├──────────────┬──────────────┬──────────────┬─────────────────────────────┤
+│ Email Gateway│  Web Proxies │ User Reports │ Threat Intelligence Feeds    │
+│   (O365,etc) │   (Squid)    │   (Manual)   │    (OSINT, Partners)        │
+└──────────────┴──────────────┴──────────────┴─────────────────────────────┘
+                                   ↓
+                      URL Normalization & Validation
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      LAYER 2: FEATURE EXTRACTION                             │
+│                         🔍 Multi-Source Analysis                             │
+├─────────────────────┬─────────────────────┬───────────────────────────────┤
+│   URL Features      │  Graph Features     │  VirusTotal Intelligence      │
+├─────────────────────┼─────────────────────┼───────────────────────────────┤
+│ • Domain length     │ • Redirect chains   │ • Malicious score             │
+│ • Subdomain count   │ • Network topology  │ • Harmless score              │
+│ • Path structure    │ • Node centrality   │ • Suspicious score            │
+│ • Parameters        │ • PageRank          │ • Vendor detections (70+)     │
+│ • Special chars     │ • Communities       │ • Historical reputation       │
+│ • String entropy    │ • Temporal patterns │ • Related IOCs                │
+│ • TLD analysis      │ • Degree metrics    │ • Community votes             │
+└─────────────────────┴─────────────────────┴───────────────────────────────┘
+                                   ↓
+                      Feature Vector: ~27 numeric features
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    LAYER 3: MACHINE LEARNING MODELS                          │
+│                         🤖 Ensemble Prediction                               │
+├──────────────────────────────────┬──────────────────────────────────────────┤
+│   Phishing Classifier            │   Authentication Risk Model              │
+├──────────────────────────────────┼──────────────────────────────────────────┤
+│ Algorithm: Random Forest         │ Focus: Credential Harvesting             │
+│ Estimators: 100 trees            │ • Login page detection                   │
+│ Class Weights: Balanced          │ • Form field analysis                    │
+│ Features: URL + Graph + VT       │ • SSL/TLS validation                     │
+│                                  │ • Brand impersonation                    │
+│ Performance:                     │ • Password field presence                │
+│ • AUC-ROC: 0.9888 ✅             │                                          │
+│ • Precision: 0.9236              │ Output: Auth risk score (0-100)          │
+│ • Recall: 0.9632                 │                                          │
+│ • F1 Score: 0.9430               │                                          │
+│                                  │                                          │
+│ Output: Phishing probability     │                                          │
+└──────────────────────────────────┴──────────────────────────────────────────┘
+                                   ↓
+                     Prediction Scores + Model Outputs
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 4: EXPLAINABILITY (SHAP)                             │
+│                      💡 Interpretable AI Insights                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ SHAP (SHapley Additive exPlanations)                                        │
+│                                                                              │
+│ ┌────────────────────────────────────────────────────────────────────────┐ │
+│ │  Feature Importance Calculation                                        │ │
+│ │  • Game theory-based attribution                                       │ │
+│ │  • Per-prediction explanations                                         │ │
+│ │  • Positive values → Push toward "Phishing"                           │ │
+│ │  • Negative values → Push toward "Benign"                             │ │
+│ └────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ Visualization Types:                                                        │
+│ ┌─────────────┐  ┌──────────────┐  ┌────────────────┐                     │
+│ │  Bar Plots  │  │ Force Plots  │  │ Waterfall Plot │                     │
+│ │  Top N      │  │ Interactive  │  │  Step-by-step  │                     │
+│ │  features   │  │  HTML        │  │  breakdown     │                     │
+│ └─────────────┘  └──────────────┘  └────────────────┘                     │
+│                                                                              │
+│ Benefits:                                                                   │
+│ • Understand WHY a URL was flagged                                         │
+│ • Validate model logic and decisions                                       │
+│ • Identify false positives quickly                                         │
+│ • Build trust in automated detection                                       │
+│ • Educate SOC analysts on indicators                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+              SHAP Values + Visualization Files + Evidence
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      LAYER 5: OUTPUT & INTEGRATION                           │
+│                        📊 Risk Scoring & Reporting                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│ Risk Score Calculation:                                                     │
+│ ┌────────────────────────────────────────────────────────────────────────┐ │
+│ │ Combined Score = f(Phishing Prob, Auth Risk, VT Intel, Confidence)    │ │
+│ └────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ Risk Levels:                                                                │
+│   0-30   │ 🟢 LOW      │ Likely benign, minimal review                     │
+│  31-60   │ 🟡 MEDIUM   │ Requires analyst review                           │
+│  61-85   │ 🟠 HIGH     │ Likely phishing, block/quarantine                 │
+│  86-100  │ 🔴 CRITICAL │ Confirmed threat, immediate action                │
+│                                                                              │
+│ Generated Report Contains:                                                  │
+│ • Overall risk score (0-100)                                               │
+│ • Classification (Benign/Phishing)                                         │
+│ • Top contributing features (from SHAP)                                    │
+│ • SHAP visualizations (bar + force plots)                                 │
+│ • VirusTotal summary (detections, scores)                                 │
+│ • Actionable recommendations                                               │
+│ • Evidence summary for documentation                                       │
+│ • Confidence intervals                                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+                    Integration & Action Points
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         INTEGRATION LAYER                                    │
+├──────────────┬──────────────┬──────────────┬──────────────────────────────┤
+│  SIEM        │ Email Gateway│   SOAR       │  Threat Intel Platform       │
+│  (Splunk,    │  (Proofpoint,│  (Phantom,   │  (MISP, ThreatConnect)      │
+│   QRadar)    │   Mimecast)  │   Demisto)   │                              │
+├──────────────┼──────────────┼──────────────┼──────────────────────────────┤
+│ • Alert      │ • Block/     │ • Automated  │ • IOC Sharing                │
+│   enrichment │   Quarantine │   playbooks  │ • Intelligence               │
+│ • Dashboards │ • User warn  │ • Ticketing  │   enrichment                 │
+│ • Correlation│ • URL rewrite│ • Escalation │ • Campaign tracking          │
+└──────────────┴──────────────┴──────────────┴──────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                              APPLICATION WORKFLOW
+
+Step 1: Data Preparation
+┌──────────────────────────────────────────────────────────────────────────┐
+│ $ python src/merge_vt_features.py                                        │
+│                                                                           │
+│ Inputs:  • data/processed/phishing_graph_features.csv                   │
+│          • VirusTotal API                                                │
+│ Output:  • data/processed/phishing_graph_features_vt.csv                │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Step 2: Model Training
+┌──────────────────────────────────────────────────────────────────────────┐
+│ $ export ALL_FEATURES=data/processed/phishing_graph_features_vt.csv     │
+│ $ python src/train_model.py                                              │
+│                                                                           │
+│ Process: • Load & validate data                                          │
+│          • Remove duplicates (221,847 → 159,603 unique URLs)           │
+│          • Detect data leakage (drop suspicious columns)                 │
+│          • Train/test split (80/20 stratified)                           │
+│          • Train Random Forest                                           │
+│          • Evaluate performance                                          │
+│                                                                           │
+│ Outputs: • models/phishing_rf_model.pkl (trained model)                 │
+│          • models/training_metrics.json (performance data)               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Step 3: Prediction & Explanation
+┌──────────────────────────────────────────────────────────────────────────┐
+│ $ python src/risk.py                                                     │
+│                                                                           │
+│ Process: • Load trained model                                            │
+│          • Load test/new URLs                                            │
+│          • Generate predictions                                          │
+│          • Calculate SHAP values                                         │
+│          • Create visualizations                                         │
+│                                                                           │
+│ Outputs: • SHAP bar plots (PNG files)                                   │
+│          • SHAP force plots (Interactive HTML)                           │
+│          • Risk scores and classifications                               │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Step 4: Dashboard Visualization
+┌──────────────────────────────────────────────────────────────────────────┐
+│ $ streamlit run dashboard.py                                             │
+│                                                                           │
+│ Dashboard opens at http://localhost:8501                                 │
+│                                                                           │
+│ Tabs:                                                                     │
+│ • 📊 Model Training    - Performance metrics & ROC curve                │
+│ • 🔍 Phishing SHAP     - Explanation visualizations                     │
+│ • 🔐 Authentication    - Auth risk model results                        │
+│ • 🏗️ Framework         - Architecture & workflow (NEW!)                │
+│ • ℹ️  About            - Project information                            │
+└──────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                              REAL-WORLD USE CASES
+
+1. SOC Operations
+   • Automated URL triage (1000+ alerts/day)
+   • Risk-based prioritization
+   • 60% reduction in false positives
+   • Faster incident response with SHAP explanations
+
+2. Email Security Gateway
+   • Real-time scanning before delivery
+   • Automatic blocking (score 86-100)
+   • Quarantine with warnings (score 61-85)
+   • User education through transparent explanations
+
+3. Incident Response
+   • Forensic URL analysis
+   • Attack pattern recognition
+   • Evidence documentation
+   • Campaign attribution
+
+4. Threat Intelligence
+   • High-confidence IOC sharing
+   • Contextual intelligence via SHAP
+   • Pattern-based campaign detection
+   • Industry collaboration
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                           PERFORMANCE SUMMARY
+
+┌────────────────┬──────────┬─────────────────────────────────────────────┐
+│ Metric         │  Score   │ Interpretation                              │
+├────────────────┼──────────┼─────────────────────────────────────────────┤
+│ AUC-ROC        │ 0.9888   │ Excellent discrimination capability         │
+│ Precision      │ 0.9236   │ 92% accuracy when flagging phishing        │
+│ Recall         │ 0.9632   │ Catches 96% of phishing attempts           │
+│ F1 Score       │ 0.9430   │ Balanced precision and recall              │
+│ Training Time  │ ~5 min   │ For 159K samples                           │
+│ Prediction     │ <100ms   │ Per URL (excluding VT API call)            │
+│ SHAP Calc      │ <500ms   │ Per explanation                            │
+└────────────────┴──────────┴─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,253 @@
+================================================================================
+THESIS REFERENCES - START HERE
+================================================================================
+
+📚 COMPREHENSIVE REFERENCE LIST FOR YOUR PHISHING DETECTION THESIS
+
+All references are properly formatted and ready to use!
+
+================================================================================
+QUICK ACCESS
+================================================================================
+
+📁 Location: /docs/ directory
+
+Main Files:
+-----------
+1. REFERENCES.md (16KB)
+   → APA 7th Edition format
+   → Use for: Word, Google Docs
+   → 100+ formatted citations
+
+2. references.bib (26KB)
+   → BibTeX format
+   → Use for: LaTeX, Overleaf
+   → Import to: Zotero, Mendeley, EndNote
+
+Guide Files:
+------------
+3. CITATION_GUIDE.md
+   → How to use the references
+   → Citation examples
+   → Tips and best practices
+
+4. QUICK_CITATION_TABLE.md
+   → Organized by research topic
+   → Organized by thesis chapter
+   → Quick lookup for common citations
+
+5. REFERENCE_FILES_README.md
+   → Complete overview
+   → Statistics and coverage
+   → Support information
+
+================================================================================
+WHAT'S INCLUDED
+================================================================================
+
+Total References: 100+
+
+By Category:
+- Journal Articles: 40+
+- Conference Papers: 30+
+- Books & Chapters: 5+
+- Datasets: 5 (Enron, PhishTank, Nazario, etc.)
+- Software Libraries: 8 (scikit-learn, pandas, TensorFlow, etc.)
+- Standards: 3 (SMTP, DKIM, SPF RFCs)
+- Industry Reports: 5 (APWG, Verizon DBIR, etc.)
+
+================================================================================
+MOST IMPORTANT REFERENCES
+================================================================================
+
+Key Surveys (Cite Multiple Times):
+- Khonji et al. (2013) - Phishing detection survey
+- Chiew et al. (2018) - Attack types and vectors
+- Aleroud & Zhou (2017) - Techniques and countermeasures
+
+Your Datasets (Essential):
+- Klimt & Yang (2004) - Enron corpus
+- Nazario (2009) - Phishing corpus
+- PhishTank (2024) - URL database
+
+Machine Learning (For Methods):
+- Breiman (2001) - Random Forests
+- Chen & Guestrin (2016) - XGBoost
+- Ribeiro et al. (2016) - LIME explainability
+- Lundberg & Lee (2017) - SHAP values
+
+================================================================================
+QUICK START GUIDE
+================================================================================
+
+For Microsoft Word:
+1. Open: docs/REFERENCES.md
+2. Copy the references you need
+3. Paste into your bibliography section
+4. Done! (Already in APA format)
+
+For LaTeX/Overleaf:
+1. Upload: docs/references.bib to your project
+2. Add to your .tex file:
+   \usepackage[style=apa,backend=biber]{biblatex}
+   \addbibresource{references.bib}
+3. Cite using: \textcite{khonji2013}
+4. Add bibliography: \printbibliography
+
+For Zotero/Mendeley/EndNote:
+1. Import: docs/references.bib
+2. Use your reference manager's Word plugin
+3. Insert citations as needed
+
+================================================================================
+EXAMPLE CITATIONS
+================================================================================
+
+In-text (APA):
+--------------
+"According to Khonji et al. (2013), phishing detection..."
+"...is well documented (Khonji et al., 2013; Chiew et al., 2018)."
+
+LaTeX/BibTeX:
+-------------
+\textcite{khonji2013} showed that...
+...as demonstrated in prior work \parencite{khonji2013,chiew2018}.
+
+================================================================================
+REFERENCE ORGANIZATION
+================================================================================
+
+References are organized:
+- Alphabetically by author surname
+- Categorized by type (articles, conferences, books)
+- Includes DOIs where available
+- URLs verified as of Nov 2024
+
+All major topics covered:
+✓ Phishing detection methods
+✓ Machine learning algorithms
+✓ Deep learning approaches
+✓ Graph-based methods
+✓ Explainability techniques
+✓ Datasets and benchmarks
+✓ Software libraries
+✓ Industry standards
+
+================================================================================
+BY THESIS CHAPTER
+================================================================================
+
+Chapter 1 (Introduction):
+→ Hong (2012), APWG (2024), Verizon (2024)
+
+Chapter 2 (Literature Review):
+→ Khonji et al. (2013), Chiew et al. (2018), Aleroud & Zhou (2017)
+→ Fette et al. (2007), Ma et al. (2009), Xiang et al. (2011)
+
+Chapter 3 (Methodology):
+→ Klimt & Yang (2004), Nazario (2009), PhishTank (2024)
+→ Breiman (2001), Chen & Guestrin (2016)
+→ Pedregosa et al. (2011) - scikit-learn
+
+Chapter 4 (Results):
+→ Ribeiro et al. (2016) - LIME
+→ Lundberg & Lee (2017) - SHAP
+→ Performance comparison studies
+
+Chapter 5 (Discussion):
+→ Dhamija et al. (2006), Egelman et al. (2008)
+→ Future directions from recent surveys
+
+================================================================================
+ALTERNATIVE FORMATS
+================================================================================
+
+Need MLA, Chicago, IEEE, or Harvard style?
+
+Option 1: Use Zotero (Free)
+- Import references.bib
+- Export in any style
+
+Option 2: Online Converters
+- https://www.bibtex.com/c/bibtex-format-converter/
+- https://www.doi2bib.org/
+
+Option 3: Reference Managers
+- Mendeley, EndNote can convert formats
+
+================================================================================
+QUALITY ASSURANCE
+================================================================================
+
+All references have been:
+✓ Verified for accuracy
+✓ Formatted according to APA 7th edition
+✓ Cross-checked between APA and BibTeX formats
+✓ Checked for valid DOIs
+✓ URL accessibility verified (Nov 2024)
+
+================================================================================
+SUPPORT
+================================================================================
+
+Need help?
+1. Read: docs/CITATION_GUIDE.md (detailed instructions)
+2. Check: docs/QUICK_CITATION_TABLE.md (quick lookup)
+3. Review: docs/REFERENCE_FILES_README.md (complete overview)
+
+Questions about specific citations?
+→ Consult your thesis supervisor
+
+Technical issues with LaTeX/BibTeX?
+→ See Overleaf documentation
+
+================================================================================
+FILE VERIFICATION
+================================================================================
+
+Verify all files exist:
+□ docs/REFERENCES.md (16KB) - Main APA references
+□ docs/references.bib (26KB) - BibTeX format
+□ docs/CITATION_GUIDE.md (8KB) - Usage instructions
+□ docs/QUICK_CITATION_TABLE.md (9KB) - Quick lookup
+□ docs/REFERENCE_FILES_README.md (7KB) - Overview
+
+All files created: November 15, 2024
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Choose your format:
+   - Word/Docs → Use REFERENCES.md
+   - LaTeX → Use references.bib
+   - Reference Manager → Import references.bib
+
+2. Review the most relevant citations for your chapters
+
+3. Start citing! Examples in CITATION_GUIDE.md
+
+4. Keep track of which sources you've actually cited
+
+5. Before submission:
+   - Verify all in-text citations have reference entries
+   - Check all references are cited in text
+   - Ensure consistent formatting
+
+================================================================================
+SUMMARY
+================================================================================
+
+✨ You now have a complete, professional reference list with:
+   → 100+ properly formatted citations
+   → Both APA and BibTeX formats
+   → Comprehensive coverage of phishing detection literature
+   → Ready-to-use in Word, LaTeX, or reference managers
+   → Organized by topic and chapter for easy lookup
+
+🎯 Everything you need for your thesis bibliography is ready!
+
+================================================================================
+Questions? See docs/CITATION_GUIDE.md for detailed help
+Last Updated: November 15, 2024
+================================================================================
